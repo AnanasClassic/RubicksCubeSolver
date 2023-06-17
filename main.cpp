@@ -8,62 +8,25 @@ int main() {
     cout << "Before Rotation:" << endl;
     cube.print_faces();
 
-    cube.rR();
-    cube.rU();
-    cube.crR();
-    cube.crU();
-    cube.crR();
-    cube.rF();
-    cube.rR();
-    cube.rR();
-    cube.crU();
-    cube.crR();
-    cube.crU();
-    cube.rR();
-    cube.rU();
-    cube.crR();
-    cube.crF();
-
-    cube.rL();
-    cube.rU();
-    cube.crL();
-    cube.crU();
-    cube.crL();
-    cube.rB();
-    cube.rL();
-    cube.rL();
-    cube.crU();
-    cube.crL();
-    cube.crU();
-    cube.rL();
-    cube.rU();
-    cube.crL();
-    cube.crB();
-
-    cube.crR();
-    cube.rU();
-    cube.rU();
-    cube.crR();
-    cube.crD();
-    cube.rR();
-    cube.rU();
-    cube.crR();
-    cube.rD();
-    cube.rR();
-    cube.crU();
-    cube.crR();
-    cube.crD();
-    cube.rR();
-    cube.rU();
-    cube.rU();
-    cube.crR();
-    cube.rD();
-    cube.rR();
-    cube.rR();
+    for (int i = 0; i < 3; ++i) {
+      cube.move(moveId::R);
+      cube.move(moveId::U);
+      cube.move(moveId::Rl);
+      cube.move(moveId::Ul);
+    }
+    cout << endl;
+    cube.print_faces();
+    for (int i = 0; i < 3; ++i) {
+      cube.move(moveId::R);
+      cube.move(moveId::U);
+      cube.move(moveId::Rl);
+      cube.move(moveId::Ul);
+    }
+    cout << endl;
 
     cout << "\nAfter Rotation:" << endl;
-    for (auto& i : cube.faces) {
-        for (auto& j : i) {
+    for (int i = 0; i < 6; ++i) {
+        for (auto& j : cube[i]) {
             cout << j << " ";
         }
         cout << endl;
