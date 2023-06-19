@@ -73,7 +73,6 @@ class WhiteFaceHeuristicPart1 : public BaseHeuristic {
     return std::max(count - 1, 0);
   }
 };
-
 class WhiteFaceHeuristicPart2 : public BaseHeuristic {
  public:
   float heuristic(const CubePosition& pos) override {
