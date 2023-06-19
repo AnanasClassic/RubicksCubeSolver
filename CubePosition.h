@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 
-
 enum class moveId {
   U,
   Ul,
@@ -25,42 +24,43 @@ enum class color {
 };
 
 class CubePosition {
+  const size_t Size = 3;
   using square = char;
-  using side = std::vector<square>;
-  std::vector<side> faces{
-      {'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'},
-      {'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
-      {'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R'},
-      {'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'},
-      {'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'},
-      {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
+  using side = std::array<square, 9>;
+  std::array<side, 6> faces = {
+      side{'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'},
+      side{'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
+      side{'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R'},
+      side{'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G'},
+      side{'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'},
+      side{'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
   };
 
-  static void rotateUp(CubePosition& pos);
+  static std::string rotateUp(CubePosition& pos);
 
-  static void rotateFront(CubePosition& pos);
+  static std::string rotateFront(CubePosition& pos);
 
-  static void rotateRight(CubePosition& pos);
+  static std::string rotateRight(CubePosition& pos);
 
-  static void rotateBack(CubePosition& pos);
+  static std::string rotateBack(CubePosition& pos);
 
-  static void rotateLeft(CubePosition& pos);
+  static std::string rotateLeft(CubePosition& pos);
 
-  static void rotateDown(CubePosition& pos);
+  static std::string rotateDown(CubePosition& pos);
 
-  static void counterRotateUp(CubePosition& pos);
+  static std::string counterRotateUp(CubePosition& pos);
 
-  static void counterRotateFront(CubePosition& pos);
+  static std::string counterRotateFront(CubePosition& pos);
 
-  static void counterRotateRight(CubePosition& pos);
+  static std::string counterRotateRight(CubePosition& pos);
 
-  static void counterRotateBack(CubePosition& pos);
+  static std::string counterRotateBack(CubePosition& pos);
 
-  static void counterRotateLeft(CubePosition& pos);
+  static std::string counterRotateLeft(CubePosition& pos);
 
-  static void counterRotateDown(CubePosition& pos);
+  static std::string counterRotateDown(CubePosition& pos);
 
-  using movePtr = std::function<void(CubePosition&)>;
+  using movePtr = std::function<std::string(CubePosition&)>;
   static const std::array<movePtr, 12> moves;
 
  public:
@@ -101,9 +101,31 @@ class CubePosition {
     std::cout << std::endl;
   }
 
-  std::vector<side> getView() const {
-    return faces;
-  }
+  std::array<side, 6> getView() const { return faces; }
 
-  void move(moveId id);
+  void move(moveId id) { moves[static_cast<size_t>(id)](*this); }
+  void move(size_t id) { moves.at(id)(*this); }
+  auto getMoves() { return moves; }
+
+  CubePosition() {}
+  CubePosition(const CubePosition&) = default;
+  CubePosition& operator=(const CubePosition& other) {
+    faces = other.faces;
+    return *this;
+  }
+  bool operator==(const CubePosition& other) const {
+    return faces == other.faces;
+  }
+};
+
+struct CubePositionHash {
+  size_t operator()(const CubePosition& pos) const {
+    size_t hash = 0;
+    for (int i = 0; i < 6; ++i) {
+      for (size_t j = 0; j < pos[i].size(); ++j) {
+        hash ^= pos[i][j] << (j % 4) * 4;
+      }
+    }
+    return hash;
+  }
 };
