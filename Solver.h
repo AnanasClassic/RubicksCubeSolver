@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <set>
 #include <memory>
+#include "MovePack.h"
 struct state {
   CubePosition pos;
   float heuristic;
@@ -16,34 +17,36 @@ bool operator<(const state& lhs, const state& rhs);
 bool operator>(const state& lhs, const state& rhs);
 template<typename Heuristic>
 class Solver {
-  std::shared_ptr<BaseHeuristic> heuristics = std::make_shared<Heuristic>();
+  Heuristic heuristic;
  public:
-  std::pair<CubePosition, std::string> solve(CubePosition cube) {
+  std::pair<CubePosition, std::string> solve(CubePosition cube, MovePack moves) {
     int iter_count = 0;
     std::unordered_set<CubePosition, CubePositionHash> visited;
-    std::priority_queue<state, std::vector<state>, std::greater<state>> unvisited;
-    auto moves = cube.getMoves();
-    auto dist = heuristics->heuristic(cube);
+    std::priority_queue<state, std::vector<state>, std::greater<>> unvisited;
+    auto dist = heuristic.dist(cube);
     unvisited.emplace(cube, dist, 0, "");
 
     visited.insert(cube);
-    while (!unvisited.empty() && iter_count < 100000) {
+    while (!unvisited.empty()) {
       auto st = unvisited.top();
       unvisited.pop();
       ++iter_count;
       for (const auto& move : moves) {
         auto copy(st.pos);
-        auto move_str = move(copy);
+        auto move_str = move.first(copy);
         if (visited.find(copy) != visited.end()) {
           continue;
         }
-        auto dist = heuristics->heuristic(copy);
+        auto dist = heuristic.dist(copy);
         if (dist == 0) {
-          std::cout << std::endl << iter_count << std::endl;
+//          std::cout << std::endl << iter_count << std::endl;
           return {copy, st.last_move + move_str};
         }
-        unvisited.emplace(copy, dist, st.depth + 1, st.last_move + move_str + " ");
+        unvisited.emplace(copy, dist, st.depth + std::min(move.second, 1.f), st.last_move + move_str + " ");
         visited.insert(st.pos);
+      }
+      if (iter_count > 50000) {
+        return {st.pos, "not found\n"};
       }
     }
     return {cube, "not found\n"};

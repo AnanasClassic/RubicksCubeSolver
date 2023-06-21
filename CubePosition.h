@@ -5,28 +5,18 @@
 #include <iostream>
 #include <vector>
 
-enum class moveId {
-  U,
-  Ul,
-  F,
-  Fl,
-  R,
-  Rl,
-  B,
-  Bl,
-  L,
-  Ll,
-  D,
-  Dl
-};
 enum class color {
   Yellow, Blue, Red, Green, Orange, White
 };
 
 class CubePosition {
   const size_t Size = 3;
+
+ public:
   using square = char;
   using side = std::array<square, 9>;
+
+ private:
   std::array<side, 6> faces = {
       side{'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'},
       side{'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B'},
@@ -36,49 +26,12 @@ class CubePosition {
       side{'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'}
   };
 
-  static std::string rotateUp(CubePosition& pos);
-
-  static std::string rotateFront(CubePosition& pos);
-
-  static std::string rotateRight(CubePosition& pos);
-
-  static std::string rotateBack(CubePosition& pos);
-
-  static std::string rotateLeft(CubePosition& pos);
-
-  static std::string rotateDown(CubePosition& pos);
-
-  static std::string counterRotateUp(CubePosition& pos);
-
-  static std::string counterRotateFront(CubePosition& pos);
-
-  static std::string counterRotateRight(CubePosition& pos);
-
-  static std::string counterRotateBack(CubePosition& pos);
-
-  static std::string counterRotateLeft(CubePosition& pos);
-
-  static std::string counterRotateDown(CubePosition& pos);
-
-  using movePtr = std::function<std::string(CubePosition&)>;
-  static const std::array<movePtr, 12> moves;
-
  public:
   side& get(color c) { return faces[static_cast<size_t>(c)]; }
   const side& get(color c) const { return faces[static_cast<size_t>(c)]; }
 
   side& operator[](size_t c) { return faces[c]; }
   const side& operator[](size_t c) const { return faces[c]; }
-
-  static side rotate_face(const side& face) {
-    return {face[6], face[3], face[0], face[7], face[4], face[1], face[8],
-            face[5], face[2]};
-  }
-
-  static side counter_rotate_face(const side& face) {
-    return {face[2], face[5], face[8], face[1], face[4], face[7], face[0],
-            face[3], face[6]};
-  }
 
   void print_faces() {
     std::cout << "U: ";
@@ -102,10 +55,6 @@ class CubePosition {
   }
 
   std::array<side, 6> getView() const { return faces; }
-
-  void move(moveId id) { moves[static_cast<size_t>(id)](*this); }
-  void move(size_t id) { moves.at(id)(*this); }
-  auto getMoves() { return moves; }
 
   CubePosition() {}
   CubePosition(const CubePosition&) = default;
